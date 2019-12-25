@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 
 #define MAX_BUFFER 1024         //Max chars in buffer
-#define MAX_ARGS 128           //Max arguments
+#define MAX_ARGS 64          //Max arguments
 #define DELIMS " \t\n"          //Delimiters on tokens
 
 #ifndef TRUE
@@ -16,10 +16,23 @@
 #define FALSE 0                 //Bool
 #endif
 
-typedef struct io io;
-struct io
+//Structures
+struct parsedCmd                //Stores parsed commands
+{
+    int argc;                   //Count of commands
+    char *cmd;                  //Command name
+    char *argv[MAX_ARGS]        //Arguments
+};
+
+struct inout
 {
     int state;
     char filename[MAX_BUFFER]
 };
 
+//Vars
+extern char **environ;
+
+//Function prototypes
+void syserrmsg(char *, char *);
+int commandExec();

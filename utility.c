@@ -1,4 +1,9 @@
-#include "myshell.h"
+//#include "myshell.h"
+
+
+//parse commands using delims
+
+//fflush(stdout);             //Flush line buffer
 
 //cd
 
@@ -15,3 +20,4 @@
 //pause
 
 //quit
+
