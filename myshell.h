@@ -8,26 +8,11 @@
 #define MAX_ARGS 64          //Max arguments
 #define DELIMS " \t\n"          //Delimiters on tokens
 
-#ifndef TRUE
-#define TRUE 1                  //Bool
-#endif
-
-#ifndef FALSE
-#define FALSE 0                 //Bool
-#endif
-
-//Structures
-struct parsedCmd                //Stores parsed commands
-{
-    int argc;                   //Count of commands
-    char *cmd;                  //Command name
-    char *argv[MAX_ARGS]        //Arguments
-};
-
-struct inout
+typedef struct io io;
+struct io
 {
     int state;
-    char filename[MAX_BUFFER]
+    char filename[MAX_BUFFER];      //Array of chars to hold filename.
 };
 
 //Vars
@@ -35,4 +20,6 @@ extern char **environ;
 
 //Function prototypes
 void syserrmsg(char *, char *);
-int commandExec();
+void argExec();
+void pressEnter();
+void processCmd(char * args[MAX_ARGS], char * cwdbuf, io *input, io *output);

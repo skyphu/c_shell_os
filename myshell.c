@@ -7,12 +7,13 @@
 *       pwd - Prints current working directory       [UNF]
 *       dir - Displays contents of current dir       [UNF]
 *       environ - lists environment settings         [UNF]
+*       quit - quit from program with return 0       [UNF]
 *       
 */
 
 #include "myshell.h"
 
-//pid_t getpid(void);             //init getpid
+pid_t getppid(void);             //init getpid
 
 int main(int argc, char **argv)
 {
@@ -23,6 +24,7 @@ int main(int argc, char **argv)
     char * prompt = "==>";          //Command prompt
     char * args[MAX_BUFFER];
     char ** arg;
+    io input, output;
     
 
     //Print shell intro, then prompt.
@@ -30,25 +32,36 @@ int main(int argc, char **argv)
     printf("SIMPLE SHELL: OS Project\n");
     while(!feof(stdin))
     {
-        if(getcwd(cwdbuffer, sizeof(cwdbuffer)))
+        //default state for IO structures
+        input.state = 0;
+        output.state = 0;
+
+        //reset structure filename and args contents for loopback
+        strcpy(input.filename, "");
+        strcpy(output.filename, "");
+        for (int i = 0; i < MAX_ARGS; i++)
         {
-            printf("%s %s", cwdbuffer, prompt);      //print prompt
-            fflush(stdout);                 //remove remaining items from buffer
-            if (fgets(line, MAX_BUFFER, stdin))
-            {
-                arg = args;
-                *arg++ = strtok(line, DELIMS);      //tokenize input
-                while ((*arg++ = strtok(NULL, DELIMS)));
-            }
+            args[i] = NULL;
         }
+
+        //prompt setup
+        if(getcwd(cwdbuffer, sizeof(cwdbuffer)))
+            printf("%s %s", cwdbuffer, prompt);      //print prompt
+            
         else
         {
-            printf("Error retrieving current working directory");
+            printf("Error retrieving current working directory %s", prompt);
+            
         }
-        fflush(stdout);
+        fflush(stdout);                         //remove remaining items from buffer
 
-        
+        if (fgets(line, MAX_BUFFER, stdin))
+            {
+                arg = args;
+                *arg++ = strtok(line, DELIMS);                  //tokenize input
+                while ((*arg++ = strtok(NULL, DELIMS)));        //last entry is null
+                processCmd(args, cwdbuffer, &input, &output);   //command-processing function is called to parse & exec commands
+            }
     }
-
     return 0;
 }
